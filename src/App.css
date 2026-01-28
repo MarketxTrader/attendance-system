@@ -64,7 +64,6 @@ label {
   margin-bottom: 8px;
   font-weight: 600;
   font-size: 0.9rem;
-  color: var(--text-main);
 }
 
 input, textarea, select {
@@ -91,7 +90,7 @@ input:focus, textarea:focus, select:focus {
   gap: 15px;
 }
 
-/* --- Autocomplete Suggestions --- */
+/* --- Suggestions Autocomplete --- */
 .suggestions-list {
   position: absolute;
   top: 100%;
@@ -112,7 +111,6 @@ input:focus, textarea:focus, select:focus {
 .suggestions-list li {
   padding: 12px 20px;
   cursor: pointer;
-  transition: background 0.2s;
 }
 
 .suggestions-list li:hover {
@@ -141,8 +139,6 @@ input:focus, textarea:focus, select:focus {
   transform: translateY(-2px);
 }
 
-.submit-btn:active { transform: translateY(0); }
-
 .view-list-btn {
   width: 100%;
   margin-top: 15px;
@@ -153,12 +149,9 @@ input:focus, textarea:focus, select:focus {
   border-radius: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.2s;
 }
 
-.view-list-btn:hover { background: #e9ecef; color: var(--primary); }
-
-/* --- Modal Overlays & Cards --- */
+/* --- Modal Styling --- */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -171,7 +164,6 @@ input:focus, textarea:focus, select:focus {
   padding: 20px;
 }
 
-/* Success/Error Modal */
 .modal-card {
   background: white;
   padding: 40px;
@@ -183,16 +175,12 @@ input:focus, textarea:focus, select:focus {
   animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.icon { font-size: 60px; margin-bottom: 15px; }
-.modal-card.success { border-bottom: 6px solid var(--success); }
-.modal-card.error { border-bottom: 6px solid var(--error); }
-
-/* --- Table Modal (បញ្ជីឈប់សម្រាក) --- */
+/* --- Table Modal --- */
 .table-modal-card {
   background: white;
   width: 100%;
-  max-width: 900px;
-  max-height: 85vh;
+  max-width: 950px;
+  max-height: 90vh;
   border-radius: 24px;
   padding: 25px;
   display: flex;
@@ -205,21 +193,31 @@ input:focus, textarea:focus, select:focus {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .close-modal-btn {
   font-size: 35px;
   cursor: pointer;
   color: var(--text-muted);
-  line-height: 1;
 }
 
+/* --- Filter Bar Styling --- */
 .filter-bar {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: 15px;
+}
+
+.filter-controls {
+  display: flex;
   gap: 10px;
-  margin-bottom: 15px;
+  flex: 1;
 }
 
 .export-btn {
@@ -230,21 +228,42 @@ input:focus, textarea:focus, select:focus {
   border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
-  white-space: nowrap;
 }
 
-/* --- Table Styling --- */
+/* --- Modern Table Scroll & Sticky --- */
 .table-wrapper {
   overflow-x: auto;
   overflow-y: auto;
-  border: 1px solid #edf2f7;
+  flex-grow: 1;
   border-radius: 12px;
+  border: 1px solid #edf2f7;
+  -webkit-overflow-scrolling: touch;
+  display: block;
+}
+
+/* Custom Scrollbar */
+.table-wrapper::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: #ccd1d9;
+  border-radius: 10px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 600px;
 }
 
 th {
@@ -257,15 +276,24 @@ th {
   text-transform: uppercase;
   position: sticky;
   top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 td {
   padding: 14px 15px;
   border-bottom: 1px solid #edf2f7;
   font-size: 0.95rem;
+  white-space: nowrap;
 }
 
 .name-cell { color: var(--primary); font-weight: 600; }
+
+/* ជួរមូលហេតុអនុញ្ញាតឱ្យធ្លាក់បន្ទាត់ */
+td:last-child {
+  white-space: normal;
+  min-width: 200px;
+}
 
 /* --- Animations --- */
 @keyframes modalPop {
@@ -292,68 +320,10 @@ td {
 /* --- Responsive --- */
 @media (max-width: 600px) {
   .form-card { padding: 20px; }
-  .table-modal-card { padding: 15px; }
-  .filter-bar { flex-direction: column; }
+  .table-modal-card { padding: 15px; width: 98%; }
+  .filter-bar { flex-direction: column; align-items: stretch; }
+  .filter-controls { flex-direction: row; }
+  .filter-controls select { flex: 1; font-size: 0.85rem; }
   .export-btn { width: 100%; }
   th, td { padding: 10px; font-size: 0.85rem; }
-}
-
-/* ១. បង្កើតការអូសឱ្យមានភាពរលូន (Smooth Scroll) សម្រាប់ Mobile */
-.table-wrapper {
-  overflow-x: auto;
-  overflow-y: auto;
-  flex-grow: 1;
-  border-radius: 12px;
-  border: 1px solid #edf2f7;
-  
-  /* ជំនួយដល់ការអូសលើ iOS (iPhone) ឱ្យរអិលល្អ */
-  -webkit-overflow-scrolling: touch;
-  
-  /* កំណត់ទំហំអប្បបរមាដើម្បីកុំឱ្យតារាងរួមតូចពេក */
-  display: block;
-}
-
-/* ២. រចនាប័ទ្មរបារ Scroll (Scrollbar) ឱ្យមើលទៅតូចស្អាត (Modern Look) */
-.table-wrapper::-webkit-scrollbar {
-  width: 15px;  /* ទំហំសម្រាប់ Vertical Scroll */
-  height: 16px; /* ទំហំសម្រាប់ Horizontal Scroll */
-}
-
-.table-wrapper::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-.table-wrapper::-webkit-scrollbar-thumb {
-  background: #ccd1d9;
-  border-radius: 10px;
-  transition: background 0.3s;
-}
-
-.table-wrapper::-webkit-scrollbar-thumb:hover {
-  background: var(--primary); /* ប្តូរពណ៌ពេលយក Mouse ដាក់ពីលើ */
-}
-
-/* ៣. បន្ថែមការកំណត់សម្រាប់ក្បាលតារាងឱ្យជាប់ខាងលើ (Sticky Header) */
-table thead th {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: #f8f9fa;
-  /* បន្ថែមស្រមោលបន្តិចនៅក្រោម Header ពេល Scroll ចុះក្រោម */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-/* ៤. ការពារការដាច់អក្សរលើ Mobile */
-td {
-  white-space: nowrap; /* ធ្វើឱ្យអក្សររត់ជួរដេកត្រង់ មិនធ្លាក់បន្ទាត់ */
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis; /* បើអក្សរវែងពេក វានឹងបង្ហាញសញ្ញា ... */
-}
-
-/* ករណីមូលហេតុវែងពេក អនុញ្ញាតឱ្យធ្លាក់បន្ទាត់បានខ្លះ */
-td:last-child {
-  white-space: normal;
-  min-width: 150px;
 }

@@ -3,10 +3,13 @@ import * as XLSX from 'xlsx';
 import './App.css';
 
 const STAFF_LIST = [
-  "Noy Vathana", "Chou Sapha", "You Ly Hieng", "Chroeng Panha",
+  "Noy Vathana", "Chou Sapha", "You Ly Hieng", "Chroeng Phanha",
   "Uy Mengsae", "Pha Chan Bory", "Chek Seang", "Som Tihak",
   "Touch Makara", "Chhon Sophanith"
 ];
+
+// បង្កើតបញ្ជីថ្ងៃពី 1 ដល់ 31
+const DAYS_LIST = Array.from({ length: 31 }, (_, i) => i + 1);
 
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwv1bvSsiaPy5Azy7PVar_E6GAyGnnLKWndXOjQLVeIg-5C4yz4HexXR3L7vUU5tfqE-Q/exec';
 
@@ -16,9 +19,22 @@ function App() {
   const [formData, setFormData] = useState({ date: '', in: '', out: '', reason: '' });
   const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState({ show: false, message: '', isSuccess: true });
-  const [showTableModal, setShowTableModal] = useState(false); // កែឈ្មោះ State
+  const [showTableModal, setShowTableModal] = useState(false);
   const [allData, setAllData] = useState([]);
+  
+  // State សម្រាប់ Filter
   const [filterName, setFilterName] = useState('All');
+  const [filterDay, setFilterDay] = useState('All');
+
+  // មុខងារបំប្លែងកាលបរិច្ឆេទទៅជា DD/MM/YYYY
+  const formatDateDMY = (dateStr) => {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
 
   const formatTime12h = (timeStr) => {
     if (!timeStr) return '00:00';
@@ -36,17 +52,25 @@ function App() {
     return `${h.toString().padStart(2, '0')}:${(m || 0).toString().padStart(2, '0')}`;
   };
 
+  // មុខងារ Filter ទិន្នន័យ
+  const getFilteredData = () => {
+    return allData.filter(item => {
+      const matchName = filterName === 'All' || item.name === filterName;
+      const itemDay = item.date ? new Date(item.date).getDate() : null;
+      const matchDay = filterDay === 'All' || itemDay === parseInt(filterDay);
+      return matchName && matchDay;
+    });
+  };
+
   const exportToExcel = () => {
-    const dataToExport = allData
-      .filter(d => filterName === 'All' || d.name === filterName)
-      .map((item, index) => ({
-        "ល.រ": index + 1,
-        "ថ្ងៃខែ": item.date ? new Date(item.date).toLocaleDateString('en-CA') : '',
-        "ឈ្មោះ": item.name,
-        "ម៉ោងចូល": formatTime12h(item.in),
-        "ម៉ោងចេញ": formatTime12h(item.out),
-        "មូលហេតុ": item.reason
-      }));
+    const dataToExport = getFilteredData().map((item, index) => ({
+      "ល.រ": index + 1,
+      "ថ្ងៃខែ": formatDateDMY(item.date),
+      "ឈ្មោះ": item.name,
+      "ម៉ោងចូល": formatTime12h(item.in),
+      "ម៉ោងចេញ": formatTime12h(item.out),
+      "មូលហេតុ": item.reason
+    }));
 
     const ws = XLSX.utils.json_to_sheet(dataToExport);
     const wb = XLSX.utils.book_new();
@@ -127,10 +151,9 @@ function App() {
 
           <button type="submit" className="submit-btn" disabled={loading}>{loading ? "កំពុងរក្សាទុក..." : "បញ្ជូនទិន្នន័យ"}</button>
         </form>
-        <button className="view-list-btn" onClick={() => setShowTableModal(true)}>👁️ មើលបញ្ជីឈប់សម្រាក</button>
+        <button className="view-list-btn" onClick={() => setShowTableModal(true)}>មើលបញ្ជីឈ្មោះឈប់សម្រាក</button>
       </div>
 
-      {/* --- Modal សម្រាប់បង្ហាញតារាង --- */}
       {showTableModal && (
         <div className="modal-overlay">
           <div className="table-modal-card">
@@ -140,23 +163,30 @@ function App() {
             </div>
             
             <div className="filter-bar">
-              <select value={filterName} onChange={(e) => setFilterName(e.target.value)}>
-                <option value="All">បង្ហាញឈ្មោះទាំងអស់</option>
-                {STAFF_LIST.map(s => <option key={s} value={s}>{s}</option>)}
-              </select>
+              <div className="filter-controls">
+                <select value={filterName} onChange={(e) => setFilterName(e.target.value)}>
+                  <option value="All">គ្រប់ឈ្មោះ</option>
+                  {STAFF_LIST.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+
+                <select value={filterDay} onChange={(e) => setFilterDay(e.target.value)}>
+                  <option value="All">គ្រប់ថ្ងៃ (1-31)</option>
+                  {DAYS_LIST.map(d => <option key={d} value={d}>ថ្ងៃទី {d}</option>)}
+                </select>
+              </div>
               <button className="export-btn" onClick={exportToExcel}>📥 Excel</button>
             </div>
 
             <div className="table-wrapper">
               <table>
                 <thead>
-                  <tr><th>ល.រ</th><th>ថ្ងៃខែ</th><th>ឈ្មោះ</th><th>ម៉ោង</th><th>មូលហេតុ</th></tr>
+                  <tr><th>ល.រ</th><th>ថ្ងៃទី ខែ ឆ្នាំ</th><th>ឈ្មោះ</th><th>ម៉ោង</th><th>មូលហេតុ</th></tr>
                 </thead>
                 <tbody>
-                  {allData.filter(d => filterName === 'All' || d.name === filterName).map((item, index) => (
+                  {getFilteredData().map((item, index) => (
                     <tr key={index}>
                       <td>{index + 1}</td>
-                      <td>{item.date ? new Date(item.date).toLocaleDateString('en-CA') : ''}</td>
+                      <td>{formatDateDMY(item.date)}</td>
                       <td className="name-cell">{item.name}</td>
                       <td>{formatTime12h(item.in)} - {formatTime12h(item.out)}</td>
                       <td>{item.reason}</td>
@@ -169,7 +199,6 @@ function App() {
         </div>
       )}
 
-      {/* --- Modal ជោគជ័យ/បរាជ័យ --- */}
       {modal.show && (
         <div className="modal-overlay">
           <div className={`modal-card ${modal.isSuccess ? 'success' : 'error'}`}>
