@@ -1,157 +1,457 @@
 /* App.css - Full Professional Styles */
 @import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;600;700&family=Inter:wght@400;600&display=swap');
 
+/* --- ១. ការកំណត់ពណ៌ និង Variable រួម --- */
 :root {
   --primary: #1a73e8;
   --primary-gradient: linear-gradient(135deg, #4285f4 0%, #1a73e8 100%);
   --bg-color: #f1f3f9;
   --card-bg: #ffffff;
   --text-main: #2c3e50;
+  --text-muted: #718096;
   --error: #ff7675;
   --success: #00b894;
   --border-color: #e2e8f0;
+  --shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-body { margin: 0; background: var(--bg-color); font-family: 'Kantumruy Pro', sans-serif; color: var(--text-main); }
+/* --- ២. ការកំណត់ទូទៅ (Reset & Base) --- */
+* { 
+  box-sizing: border-box; 
+  -webkit-tap-highlight-color: transparent; 
+}
 
-.app-container { display: flex; flex-direction: column; align-items: center; padding: 20px; min-height: 100vh; }
+body { 
+  margin: 0; 
+  background: var(--bg-color); 
+  font-family: 'Kantumruy Pro', sans-serif; 
+  color: var(--text-main); 
+}
 
-/* --- Form Card --- */
+.app-container { 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  padding: 20px; 
+  min-height: 100vh; 
+}
+
+/* --- ៣. កាតទម្រង់បែបបទ (Form Card) --- */
 .form-card {
-  background: white; padding: 30px; border-radius: 24px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08); width: 100%; max-width: 600px;
+  background: white; 
+  padding: 30px; 
+  border-radius: 24px;
+  box-shadow: var(--shadow); 
+  width: 100%; 
+  max-width: 600px;
 }
 
-h2 { text-align: center; color: var(--primary); margin-bottom: 25px; font-weight: 700; }
+h2 { 
+  text-align: center; 
+  color: var(--primary); 
+  margin-bottom: 25px; 
+  font-weight: 700; 
+}
 
-.input-group { margin-bottom: 20px; position: relative; }
-label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; color: #4a5568; }
+.input-group { 
+  margin-bottom: 20px; 
+  position: relative; 
+}
+.input-group input[type="date"] {
+  padding-right: 14px;
+}
 
+label { 
+  display: block; 
+  margin-bottom: 8px; 
+  font-weight: 600; 
+  font-size: 0.9rem; 
+  color: #4a5568; 
+}
+
+/* --- ៤. ការកំណត់ Input, Textarea និង Select --- */
 input, textarea, select {
-  width: 100%; height: 50px; padding: 12px 16px;
-  border: 1px solid var(--border-color); border-radius: 12px; font-family: inherit; font-size: 1rem;
-  transition: all 0.2s; background: #fafafa;
+  width: 100%; 
+  height: 50px; 
+  padding: 12px 16px;
+  border: 1px solid var(--border-color); 
+  border-radius: 12px; 
+  font-family: inherit; 
+  font-size: 1rem;
+  transition: all 0.2s; 
+  background: #fafafa;
 }
 
-textarea { height: 100px; resize: none; }
-input:focus, select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px rgba(26,115,232,0.1); background: #fff; }
+textarea { 
+  height: 100px; 
+  resize: none; 
+}
 
-.input-error { border: 2px solid var(--error) !important; background: #fff5f5; }
-.error-hint { color: var(--error); font-size: 0.7rem; position: absolute; bottom: -18px; left: 5px; }
+input:focus, select:focus, textarea:focus { 
+  border-color: var(--primary); 
+  outline: none; 
+  box-shadow: 0 0 0 4px rgba(26,115,232,0.1); 
+  background: #fff; 
+}
 
-.time-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+/* សម្រាប់ Error ពេលវាយម៉ោងខុស ឬស្ទួន */
+.input-error, .input-duplicate-error { 
+  border: 2px solid var(--error) !important; 
+  background: #fff5f5 !important; 
+  animation: shake 0.4s ease-in-out; 
+}
 
-/* --- Suggestions --- */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+}
+
+.time-row { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 15px; 
+}
+
+.countdown-container {
+  position: relative;
+  width: 60px;   /* ទំហំរង្វង់ល្មមដូចក្នុងរូប */
+  height: 60px;
+  margin: 0 auto 15px;
+  display: grid;
+  place-items: center;
+}
+
+.countdown-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg); /* ឱ្យវាចាប់ផ្តើមវិលពីខាងលើ */
+}
+
+.countdown-svg circle.track,
+.countdown-svg circle.bar {
+  fill: none;
+  stroke-width: 3px; /* កម្រាស់ខ្សែរង្វង់ */
+}
+
+.countdown-svg circle.track {
+  stroke: #fee2e2; /* ពណ៌ក្រហមខ្ចីបំផុតសម្រាប់ខ្សែទ្រនាប់ */
+}
+
+.countdown-svg circle.bar {
+  stroke: #fc8181; /* ពណ៌ក្រហម error */
+  stroke-linecap: round;
+  stroke-dasharray: 84; /* បរិមាត្ររង្វង់ */
+  transition: stroke-dashoffset 0.3s ease-out;
+}
+
+.countdown-number {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fc8181;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  animation: pulse-number 1s infinite;
+}
+@keyframes pulse-number {
+  0% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* --- ៥. បញ្ជីឈ្មោះស្វ័យប្រវត្តិ (Suggestions List) --- */
 .suggestions-list {
-  position: absolute; top: 100%; left: 0; right: 0; background: white;
-  border-radius: 12px; margin-top: 5px; list-style: none; padding: 8px 0;
-  z-index: 100; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #eee;
+  position: absolute; 
+  top: 100%; 
+  left: 0; 
+  right: 0; 
+  background: white;
+  border-radius: 12px; 
+  margin-top: 5px; 
+  list-style: none; 
+  padding: 8px 0;
+  z-index: 100; 
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+  border: 1px solid #eee;
 }
-.suggestions-list li { padding: 12px 15px; cursor: pointer; transition: 0.2s; }
-.suggestions-list li:hover { background: #f0f7ff; color: var(--primary); padding-left: 20px; }
 
-/* --- Buttons --- */
+.suggestions-list li { 
+  padding: 12px 15px; 
+  cursor: pointer; 
+  transition: 0.2s; 
+}
+
+.suggestions-list li:hover { 
+  background: #f0f7ff; 
+  color: var(--primary); 
+  padding-left: 20px; 
+}
+
+/* --- ៦. ប៊ូតុង (Buttons) --- */
 .submit-btn {
-  width: 100%; height: 55px; background: var(--primary-gradient);
-  color: white; border: none; border-radius: 14px; font-size: 1.1rem;
-  font-weight: 700; cursor: pointer; transition: 0.3s;
-  box-shadow: 0 4px 15px rgba(26, 115, 232, 0.3); display: flex; align-items: center; justify-content: center;
+  width: 100%; 
+  height: 55px; 
+  background: var(--primary-gradient);
+  color: white; 
+  border: none; 
+  border-radius: 14px; 
+  font-size: 1.1rem;
+  font-weight: 700; 
+  cursor: pointer; 
+  transition: 0.3s;
+  box-shadow: 0 4px 15px rgba(26, 115, 232, 0.3); 
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
 }
-.submit-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(26, 115, 232, 0.4); }
-.submit-btn:disabled { background: #bdc3c7; cursor: not-allowed; box-shadow: none; }
 
-.view-list-btn { width: 100%; margin-top: 15px; background: #f8f9fa; border: 1px solid #e9ecef; padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600; transition: 0.2s; color: #718096; }
-.view-list-btn:hover { background: #edf2f7; color: var(--primary); border-color: var(--primary); }
+.submit-btn:hover:not(:disabled) { 
+  transform: translateY(-2px); 
+  box-shadow: 0 6px 20px rgba(26, 115, 232, 0.4); 
+}
 
-/* --- Modal Layout --- */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+.submit-btn:disabled { 
+  background: #bdc3c7; 
+  cursor: not-allowed; 
+}
+
+.view-list-btn { 
+  width: 100%; 
+  margin-top: 15px; 
+  background: #f8f9fa; 
+  border: 1px solid #e9ecef; 
+  padding: 12px; 
+  border-radius: 12px; 
+  cursor: pointer; 
+  font-weight: 600; 
+  color: var(--text-muted); 
+}
+
+.view-list-btn:hover { 
+  background: #edf2f7; 
+  color: var(--primary); 
+}
+
+/* --- ៧. ផ្ទាំងបង្ហាញតារាង (Table Modal Card) --- */
+.modal-overlay { 
+  position: fixed; 
+  inset: 0; 
+  background: rgba(0,0,0,0.5); 
+  backdrop-filter: blur(4px); 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  z-index: 1000; 
+  padding: 20px; 
+}
 
 .table-modal-card { 
-  background: white; width: 100%; max-width: 950px; max-height: 90vh; 
-  border-radius: 24px; padding: 25px; display: flex; flex-direction: column; 
-  overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.2); 
+  background: white; 
+  width: 100%; 
+  max-width: 950px; 
+  max-height: 90vh; 
+  border-radius: 24px; 
+  padding: 25px; 
+  display: flex; 
+  flex-direction: column; 
+  overflow: hidden; 
 }
 
-.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding: 0 5px; }
-.modal-header h3 { margin: 0; font-size: 1.5rem; font-weight: 700; color: #2d3748; }
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 20px;
+}
 
-.close-modal-btn { font-size: 35px; cursor: pointer; color: #a0aec0; line-height: 1; transition: 0.2s; padding: 5px; }
-.close-modal-btn:hover { color: var(--error); transform: scale(1.1); }
+.modal-header h3 {
+  margin: 0;
+  color: var(--primary);
+  font-size: 1.4rem;
+}
 
-/* --- Filter & Table --- */
+.close-modal-btn {
+  background: #f1f3f9; /* ពណ៌ផ្ទៃខាងក្រោយស្រាល */
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%; /* ប៊ូតុងរង្វង់ */
+  font-size: 28px;
+  line-height: 1;
+  color: #666;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.close-modal-btn:hover {
+  background: var(--error); /* ប្តូរជាពណ៌ក្រហមពេល Hover */
+  color: white;
+  transform: rotate(90deg); /* បង្វិលបន្តិចពេល Hover ឱ្យមើលទៅឡូយ */
+}
+
+.close-modal-btn:active {
+  transform: scale(0.9); /* រួមតូចបន្តិចពេលចុច */
+}
+/* --- ៨. របារចម្រោះទិន្នន័យ (Filter Bar) --- */
 .filter-bar { 
-  display: flex; justify-content: space-between; align-items: center; 
-  gap: 15px; margin-bottom: 20px; background: #f8f9fa; padding: 15px; 
-  border-radius: 16px; border: 1px solid #edf2f7;
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  gap: 15px; 
+  margin-bottom: 20px; 
+  background: #f8f9fa; 
+  padding: 15px; 
+  border-radius: 16px; 
 }
-.filter-controls { display: flex; gap: 12px; flex: 1; }
-.filter-controls select, .export-btn { height: 45px; border-radius: 10px; font-size: 0.95rem; }
+
+.filter-controls { 
+  display: flex; 
+  gap: 12px; 
+  flex: 1; 
+}
+
+.filter-controls select { 
+  height: 45px; 
+  border-radius: 10px; 
+}
 
 .export-btn { 
-  background: var(--success); color: white; border: none; 
-  padding: 0 20px; cursor: pointer; font-weight: 600; 
-  display: flex; align-items: center; gap: 8px; transition: 0.2s;
+  background: var(--success); 
+  color: white; 
+  border: none; 
+  padding: 10px 20px; 
+  border-radius: 10px; 
+  cursor: pointer; 
+  font-weight: 600; 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
 }
-.export-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
 
-.table-wrapper { overflow: auto; border: 1px solid #edf2f7; border-radius: 16px; }
-table { width: 100%; border-collapse: collapse; min-width: 700px; }
-th { background: #f8fafc; padding: 18px 15px; position: sticky; top: 0; font-size: 0.8rem; color: #718096; text-transform: uppercase; z-index: 10; border-bottom: 2px solid #edf2f7; text-align: left; letter-spacing: 0.5px; }
-td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; }
-tbody tr:hover { background-color: #f7fafc; }
-.name-cell { color: var(--primary); font-weight: 600; }
+/* --- ៩. ការរៀបចំតារាង (Table Styling) --- */
+.table-wrapper { 
+  overflow: auto; 
+  border: 1px solid #edf2f7; 
+  border-radius: 16px; 
+}
 
-/* --- Success/Error Feedback Modal (កែសម្រួលឱ្យស្អាត) --- */
-.modal-card { 
-  background: white; padding: 45px 30px; border-radius: 28px; 
-  text-align: center; width: 340px; position: relative; 
-  animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+table { 
+  width: 100%; 
+  border-collapse: collapse; 
+  min-width: 700px; 
+}
+
+th { 
+  background: #f8fafc; 
+  padding: 18px 15px; 
+  position: sticky; 
+  top: 0; 
+  font-size: 0.8rem; 
+  color: var(--text-muted); 
+  text-transform: uppercase; 
+  border-bottom: 2px solid #edf2f7; 
+  text-align: left; 
+}
+
+td { 
+  padding: 15px; 
+  border-bottom: 1px solid #f1f5f9; 
+  font-size: 0.95rem; 
+}
+
+.name-cell { 
+  color: var(--primary); 
+  font-weight: 600; 
+}
+
+/* ការបង្ហាញ "មូលហេតុ" ឱ្យខ្លី (... បើវែងពេក) */
+.reason-cell {
+  max-width: 200px;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* បន្ថែមឆ្នូតពណ៌ខាងលើតាមប្រភេទលទ្ធផល */
+.reason-cell:hover {
+  white-space: normal;
+  overflow: visible;
+  background: #fff;
+  position: relative;
+}
+
+/* --- ១០. ផ្ទាំងជូនដំណឹងជោគជ័យ/បរាជ័យ (Feedback Modal) --- */
+.modal-card { 
+  background: white; 
+  padding: 40px; 
+  border-radius: 28px; 
+  text-align: center; 
+  width: 340px; 
+  position: relative; 
+  animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
 .modal-card.success { border-top: 8px solid var(--success); }
 .modal-card.error { border-top: 8px solid var(--error); }
 
-@keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes pop { 
+  from { transform: scale(0.8); opacity: 0; } 
+  to { transform: scale(1); opacity: 1; } 
+}
 
 .icon { 
   font-size: 65px; margin-bottom: 20px; display: block;
   animation: bounceIcon 1.5s ease infinite;
 }
 
-@keyframes bounceIcon {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
-}
 
-.modal-card p { font-size: 1.2rem; font-weight: 700; color: #2d3748; margin: 0; }
-
-.close-x { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #cbd5e0; transition: 0.2s; }
-.close-x:hover { color: var(--error); }
-
-/* Progress Bar នៅបាតក្រោមបង្អស់ */
 .progress-bar { 
-  height: 6px; background: var(--success); 
-  position: absolute; bottom: 0; left: 0; 
-  width: 100%; border-radius: 0; 
-  animation: load 5s linear forwards; 
+  height: 6px; 
+  background: var(--success); 
+  position: absolute; 
+  bottom: 0; 
+  left: 0; 
+  width: 100%; 
+  animation: load 4s linear forwards; 
 }
 
 .modal-card.error .progress-bar { background: var(--error); }
 
-@keyframes load { from { width: 100%; } to { width: 0%; } }
+@keyframes load { 
+  from { width: 100%; } 
+  to { width: 0%; } 
+}
 
-/* Spinner */
-.spinner-s { width: 22px; height: 22px; border: 3px solid rgba(255,255,255,0.3); border-top: 3px solid white; border-radius: 50%; animation: spin 0.8s linear infinite; }
-@keyframes spin { 100% { transform: rotate(360deg); } }
-
-/* Responsive */
+/* --- ១១. ការកំណត់លើអេក្រង់តូច (Responsive) --- */
 @media (max-width: 600px) {
-  .filter-bar { flex-direction: column; align-items: stretch; }
-  .export-btn { width: 100%; justify-content: center; }
-  .table-modal-card { padding: 10px; height: 60vh; border-radius: 20px; }
-  .time-row { grid-template-columns: 1fr; }
+
+  .form-card { padding: 20px; }
+  .time-row { grid-template-columns: 1fr 1fr; }
+  .filter-bar { flex-direction: column; }
+  .submit-btn{font-family: 'Kantumruy Pro', sans-serif;}
+  .view-list-btn{font-family: 'Kantumruy Pro', sans-serif;}
+  .filter-controls { width: 100%; }
+  .table-modal-card { height: 80vh; padding: 15px; }
+  .input-group input[type="date"] {
+  padding: 2px 1px;
+  }
+  .countdown-container {
+    width: 60px;
+    height: 50px;
+  }
+  .countdown-number {
+    font-size: 1rem;
+  }
+
+
+
 }
