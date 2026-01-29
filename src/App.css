@@ -390,19 +390,36 @@ td {
 }
 
 /* --- ១០. ផ្ទាំងជូនដំណឹងជោគជ័យ/បរាជ័យ (Feedback Modal) --- */
-.modal-card { 
-  background: white; 
-  padding: 40px; 
-  border-radius: 28px; 
-  text-align: center; 
-  width: 340px; 
-  position: relative; 
-  animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+/* បន្ថែមពណ៌បៃតងសម្រាប់ Countdown ពេលជោគជ័យ */
+.modal-card.success .countdown-svg circle.bar {
+  stroke: #10b981; /* ពណ៌បៃតង Success */
 }
 
-.modal-card.success { border-top: 8px solid var(--success); }
-.modal-card.error { border-top: 8px solid var(--error); }
+.modal-card.success .countdown-number {
+  color: #10b981;
+}
 
+.modal-card.success .countdown-svg circle.track {
+  stroke: #d1fae5; /* ពណ៌បៃតងខ្ចីបំផុត */
+}
+.modal-card {
+  background: white;
+  padding: 40px;
+  border-radius: 30px;
+  text-align: center;
+  width: 320px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  border: none; /* ដក Border ចាស់ចេញ */
+}
+.modal-card p {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 15px;
+  color: var(--text-main);
+}
+
+.modal-card.success { border-bottom: 8px solid #10b981; }
+.modal-card.error { border-bottom: 8px solid #ef4444; }
 @keyframes pop { 
   from { transform: scale(0.8); opacity: 0; } 
   to { transform: scale(1); opacity: 1; } 

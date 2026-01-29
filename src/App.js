@@ -195,11 +195,30 @@ function App() {
         method: 'POST', mode: 'no-cors',
         body: JSON.stringify({ ...formData, name, no: Date.now(), status: 'Pending' })
       });
-      setModal({ show: true, message: 'បញ្ជូនទិន្នន័យជោគជ័យ!', isSuccess: true });
-      setName(''); setFormData({ date: '', in: '', out: '', reason: '' });
+
+      // បង្ហាញ Modal ជោគជ័យជាមួយ Countdown
+      const waitTime = 3;
+      setCountdown(waitTime);
+      setModal({ show: true, message: '✅ បញ្ជូនទិន្នន័យបានជោគជ័យ!', isSuccess: true });
+      
+      setName(''); 
+      setFormData({ date: '', in: '', out: '', reason: '' });
       fetchHistory();
-    } catch (err) { setModal({ show: true, message: 'កំហុសបច្ចេកទេស!', isSuccess: false }); }
-    finally { setLoading(false); setTimeout(() => setModal(prev => ({ ...prev, show: false })), 4000); }
+
+      const timer = setInterval(() => setCountdown(prev => prev - 1), 1000);
+      
+      setTimeout(() => {
+        clearInterval(timer);
+        setModal(prev => ({ ...prev, show: false }));
+        setCountdown(0);
+      }, waitTime * 1000);
+
+    } catch (err) { 
+      setModal({ show: true, message: '❌ កំហុសបច្ចេកទេស!', isSuccess: false }); 
+      setTimeout(() => setModal(prev => ({ ...prev, show: false })), 3000);
+    } finally { 
+      setLoading(false); 
+    }
   };
 
   const exportToExcel = () => {
@@ -354,21 +373,27 @@ function App() {
       )}
 
       {modal.show && (
-        <div className="modal-overlay">
-          <div className={`modal-card ${modal.isSuccess ? 'success' : 'error'}`}>
-            {!modal.isSuccess && countdown > 0 ? (
-              <div className="countdown-container">
-                <svg className="countdown-svg" viewBox="0 0 32 32">
-                  <circle r="13.5" cx="16" cy="16" className="track"></circle>
-                  <circle r="13.5" cx="16" cy="16" className="bar" style={{ strokeDashoffset: (countdown / 4) * 84 - 84 }}></circle>
-                </svg>
-                <div className="countdown-number">{countdown}</div>
-              </div>
-            ) : <div className="icon">{modal.isSuccess ? '✅' : '❌'}</div>}
-            <p>{modal.message}</p>
+          <div className="modal-overlay">
+            <div className={`modal-card ${modal.isSuccess ? 'success' : 'error'}`}>
+              {countdown > 0 ? (
+                <div className="countdown-container">
+                  <svg className="countdown-svg" viewBox="0 0 32 32">
+                    <circle r="13.5" cx="16" cy="16" className="track"></circle>
+                    <circle 
+                      r="13.5" cx="16" cy="16" 
+                      className="bar" 
+                      style={{ strokeDashoffset: (countdown / (modal.isSuccess ? 3 : 4)) * 84 - 84 }}
+                    ></circle>
+                  </svg>
+                  <div className="countdown-number">{countdown}</div>
+                </div>
+              ) : (
+                <div className="icon">{modal.isSuccess ? '✅' : '❌'}</div>
+              )}
+              <p>{modal.message}</p>
+            </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 }
