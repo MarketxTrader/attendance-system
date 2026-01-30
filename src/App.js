@@ -3,7 +3,7 @@ import * as XLSX from 'xlsx';
 import './App.css';
 
 const STAFF_LIST = [
-  "Noy Vathana", "Chou Sapha", "You Ly Hieng", "Chroeng Phanha",
+  "Noy Vathana", "Chou Saphai", "You Ly Hieng", "Chroeng Phanha",
   "Uy Mengsae", "Pha Chan Bory", "Chek Seang", "Som Tihak",
   "Touch Makara", "Chhon Sophanith"
 ];
